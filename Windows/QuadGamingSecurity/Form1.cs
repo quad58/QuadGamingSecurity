@@ -1,6 +1,8 @@
 ﻿using Microsoft.Win32;
+using QuadGamingSecurity.Properties;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO.Ports;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -20,6 +22,19 @@ namespace QuadGamingSecurity
         private bool PropperExiting;
 
         private RegistryKey RegistryKey;
+
+        private bool ConsoleVisible
+        {
+            get => ConsoleTextBox.Visible;
+            set
+            {
+                ConsoleCkeckbox.Checked = value;
+                ConsoleTextBox.Visible = value;
+                Size = value ? new Size(816, 600) : new Size(816, 442);
+                Settings.Default.ConsoleVisible = value;
+                Settings.Default.Save();
+            }
+        }
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -54,13 +69,11 @@ namespace QuadGamingSecurity
         [DllImport("user32.dll")]
         private static extern IntPtr GetShellWindow();
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool AllocConsole();
-
         public Form1()
         {
             InitializeComponent();
+
+            Console.SetOut(new TextBoxWriter(ConsoleTextBox));
 
             RefreshWindowsList();
             RefreshPortsList();
@@ -71,23 +84,39 @@ namespace QuadGamingSecurity
                 AutostartCheckbox.Checked = true;
             }
 
+            ConsoleVisible = Settings.Default.ConsoleVisible;
+
             NotifyIcon.ContextMenu = new ContextMenu();
             NotifyIcon.ContextMenu.MenuItems.Add(new MenuItem("Foreground now", (object sender, EventArgs args) => { ForegroundSelectedWindow(); }));
             NotifyIcon.ContextMenu.MenuItems.Add(new MenuItem("Open", (object sender, EventArgs args) => { ShowFromTray(); }));
             NotifyIcon.ContextMenu.MenuItems.Add(new MenuItem("Exit", (object sender, EventArgs args) => { ExitPropperly(); }));
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            if (!string.IsNullOrEmpty(Settings.Default.AutoConnectPort))
+            {
+                AutoConnectCheckbox.Checked = true;
+                OpenPort(Settings.Default.AutoConnectPort);
+            }
+        }
+
         private void DevicesListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (PortsListBox.SelectedIndex != 0)
             {
-                LogLine("Port selected: " + PortsNames[PortsListBox.SelectedIndex - 1]);
-                ClosePort();
-                OpenPort(PortsNames[PortsListBox.SelectedIndex - 1]);
+                if (PortsListBox.SelectedIndex != -1)
+                {
+                    Console.WriteLine("Port selected: " + PortsNames[PortsListBox.SelectedIndex - 1]);
+                    ClosePort();
+                    OpenPort(PortsNames[PortsListBox.SelectedIndex - 1]);
+                }
             }
             else
             {
-                LogLine("Port deselected");
+                Console.WriteLine("Port deselected");
                 ClosePort();
             }
         }
@@ -104,21 +133,26 @@ namespace QuadGamingSecurity
             PortsListBox.Items.Add("(none)");
             foreach (string portName in PortsNames)
             {
-                LogLine(portName);
                 PortsListBox.Items.Add(portName);
             }
         }
 
         private void OpenPort(string portName)
         {
-            LogLine("Opening " + portName);
+            Console.WriteLine("Opening " + portName);
+            if (AutoConnectCheckbox.Checked)
+            {
+                Settings.Default.AutoConnectPort = portName;
+                Settings.Default.Save();
+            }
+
             try
             {
                 ConnectedSerialPort = new SerialPort(portName, 9600);
                 ConnectedSerialPort.Open();
                 Thread portReadThread = new Thread(() =>
                 {
-                    Invoke((MethodInvoker) delegate { LogLine(portName + " opened"); });
+                    Invoke((MethodInvoker) delegate { Console.WriteLine(portName + " opened"); });
                     try
                     {
                         while (ConnectedSerialPort.IsOpen)
@@ -127,14 +161,14 @@ namespace QuadGamingSecurity
                             string message = ConnectedSerialPort.ReadLine();
                             Invoke((MethodInvoker) delegate
                             {
-                                LogLine("Received: " + message);
+                                Console.WriteLine("Received: " + message);
                                 ForegroundSelectedWindow();
                             });
                         }
                     }
                     catch (Exception e)
                     {
-                        Invoke((MethodInvoker) delegate { LogLine($"Receive from {portName} failed. {e.GetType()}: {e.Message.Replace("\n", "")}"); });
+                        Invoke((MethodInvoker) delegate { Console.WriteLine($"Receive from {portName} failed. {e.GetType()}: {e.Message.Replace("\n", "")}"); });
                     }
                 });
                 portReadThread.IsBackground = true;
@@ -142,7 +176,7 @@ namespace QuadGamingSecurity
             }
             catch (Exception e)
             {
-                LogLine($"Opening {portName} failed. {e.GetType()}: {e.Message.Replace("\n", "")}");
+                Console.WriteLine($"Opening {portName} failed. {e.GetType()}: {e.Message.Replace("\n", "")}");
             }
         }
 
@@ -152,9 +186,9 @@ namespace QuadGamingSecurity
             {
                 if (ConnectedSerialPort.IsOpen)
                 {
-                    LogLine("Closing " + ConnectedSerialPort.PortName);
+                    Console.WriteLine("Closing " + ConnectedSerialPort.PortName);
                     ConnectedSerialPort.Close();
-                    LogLine(ConnectedSerialPort.PortName + " closed");
+                    Console.WriteLine(ConnectedSerialPort.PortName + " closed");
                 }
             }
         }
@@ -163,19 +197,22 @@ namespace QuadGamingSecurity
         {
             if (WindowsListBox.SelectedIndex != 0)
             {
-                LogLine("Window selected: " + WindowsListBox.SelectedItem);
-                SelectedWindow = OpenedWindowsList[WindowsListBox.SelectedIndex - 1];
+                if (WindowsListBox.SelectedIndex != -1)
+                {
+                    Console.WriteLine("Window selected: " + WindowsListBox.SelectedItem);
+                    SelectedWindow = OpenedWindowsList[WindowsListBox.SelectedIndex - 1];
+                }
             }
             else
             {
-                LogLine("Window deselected");
+                Console.WriteLine("Window deselected");
                 SelectedWindow = IntPtr.Zero;
             }
         }
 
         private void RefreshWindowsList()
         {
-            LogLine("Refreshing windows list...");
+            Console.WriteLine("Refreshing windows list...");
 
             SelectedWindow = IntPtr.Zero;
 
@@ -194,7 +231,6 @@ namespace QuadGamingSecurity
                 StringBuilder stringBuilder = new StringBuilder(textLength);
                 GetWindowText(hWnd, stringBuilder, textLength + 1);
                 string windowText = stringBuilder.ToString();
-                Console.WriteLine(windowText);
                 OpenedWindowsList.Add(hWnd);
                 WindowsListBox.Items.Add(windowText);
 
@@ -220,6 +256,8 @@ namespace QuadGamingSecurity
         {
             Visible = true;
             ShowInTaskbar = true;
+            RefreshWindowsList();
+            RefreshPortsList();
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -289,13 +327,7 @@ namespace QuadGamingSecurity
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            WindowState = FormWindowState.Minimized;
-        }
-
-        private void LogLine(string line)
-        {
-            Console.WriteLine(line);
-            ConsoleTextBox.Text = line + "\r\n" + ConsoleTextBox.Text;
+            //WindowState = FormWindowState.Minimized;
         }
 
         private void AutostartCheckbox_CheckedChanged(object sender, EventArgs e)
@@ -307,6 +339,28 @@ namespace QuadGamingSecurity
             else
             {
                 RegistryKey.DeleteValue("QuadGamingSecurity", false);
+            }
+        }
+
+        private void ConsoleCkeckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            ConsoleVisible = ConsoleCkeckbox.Checked;
+        }
+
+        private void AutoConnectCheckbox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (AutoConnectCheckbox.Checked)
+            {
+                if (PortsListBox.SelectedIndex != -1)
+                {
+                    Settings.Default.AutoConnectPort = PortsNames[PortsListBox.SelectedIndex - 1];
+                    Settings.Default.Save();
+                }
+            }
+            else
+            {
+                Settings.Default.AutoConnectPort = "";
+                Settings.Default.Save();
             }
         }
     }

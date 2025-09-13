@@ -39,9 +39,11 @@ namespace QuadGamingSecurity
             this.ForegroundSelectedProcessButton = new System.Windows.Forms.Button();
             this.ExitButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.AutostartCheckbox = new System.Windows.Forms.CheckBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.ConsoleTextBox = new System.Windows.Forms.TextBox();
-            this.AutostartCheckbox = new System.Windows.Forms.CheckBox();
+            this.AutoConnectCheckbox = new System.Windows.Forms.CheckBox();
+            this.ConsoleCkeckbox = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
@@ -121,12 +123,24 @@ namespace QuadGamingSecurity
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.ConsoleCkeckbox);
             this.panel1.Controls.Add(this.AutostartCheckbox);
             this.panel1.Controls.Add(this.ExitButton);
             this.panel1.Location = new System.Drawing.Point(12, 5);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(776, 23);
             this.panel1.TabIndex = 6;
+            // 
+            // AutostartCheckbox
+            // 
+            this.AutostartCheckbox.AutoSize = true;
+            this.AutostartCheckbox.Location = new System.Drawing.Point(4, 4);
+            this.AutostartCheckbox.Name = "AutostartCheckbox";
+            this.AutostartCheckbox.Size = new System.Drawing.Size(138, 17);
+            this.AutostartCheckbox.TabIndex = 6;
+            this.AutostartCheckbox.Text = "Start on Windows starts";
+            this.AutostartCheckbox.UseVisualStyleBackColor = true;
+            this.AutostartCheckbox.CheckedChanged += new System.EventHandler(this.AutostartCheckbox_CheckedChanged);
             // 
             // panel2
             // 
@@ -146,25 +160,37 @@ namespace QuadGamingSecurity
             this.ConsoleTextBox.Multiline = true;
             this.ConsoleTextBox.Name = "ConsoleTextBox";
             this.ConsoleTextBox.ReadOnly = true;
-            this.ConsoleTextBox.Size = new System.Drawing.Size(775, 149);
+            this.ConsoleTextBox.Size = new System.Drawing.Size(775, 154);
             this.ConsoleTextBox.TabIndex = 8;
             // 
-            // AutostartCheckbox
+            // AutoConnectCheckbox
             // 
-            this.AutostartCheckbox.AutoSize = true;
-            this.AutostartCheckbox.Location = new System.Drawing.Point(4, 4);
-            this.AutostartCheckbox.Name = "AutostartCheckbox";
-            this.AutostartCheckbox.Size = new System.Drawing.Size(138, 17);
-            this.AutostartCheckbox.TabIndex = 6;
-            this.AutostartCheckbox.Text = "Start on Windows starts";
-            this.AutostartCheckbox.UseVisualStyleBackColor = true;
-            this.AutostartCheckbox.CheckedChanged += new System.EventHandler(this.AutostartCheckbox_CheckedChanged);
+            this.AutoConnectCheckbox.AutoSize = true;
+            this.AutoConnectCheckbox.Location = new System.Drawing.Point(94, 118);
+            this.AutoConnectCheckbox.Name = "AutoConnectCheckbox";
+            this.AutoConnectCheckbox.Size = new System.Drawing.Size(104, 17);
+            this.AutoConnectCheckbox.TabIndex = 9;
+            this.AutoConnectCheckbox.Text = "Connect on start";
+            this.AutoConnectCheckbox.UseVisualStyleBackColor = true;
+            this.AutoConnectCheckbox.CheckedChanged += new System.EventHandler(this.AutoConnectCheckbox_CheckedChanged);
+            // 
+            // ConsoleCkeckbox
+            // 
+            this.ConsoleCkeckbox.AutoSize = true;
+            this.ConsoleCkeckbox.Location = new System.Drawing.Point(148, 4);
+            this.ConsoleCkeckbox.Name = "ConsoleCkeckbox";
+            this.ConsoleCkeckbox.Size = new System.Drawing.Size(64, 17);
+            this.ConsoleCkeckbox.TabIndex = 7;
+            this.ConsoleCkeckbox.Text = "Console";
+            this.ConsoleCkeckbox.UseVisualStyleBackColor = true;
+            this.ConsoleCkeckbox.CheckedChanged += new System.EventHandler(this.ConsoleCkeckbox_CheckedChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 561);
+            this.Controls.Add(this.AutoConnectCheckbox);
             this.Controls.Add(this.ConsoleTextBox);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.ForegroundSelectedProcessButton);
@@ -200,6 +226,8 @@ namespace QuadGamingSecurity
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.TextBox ConsoleTextBox;
         private System.Windows.Forms.CheckBox AutostartCheckbox;
+        private System.Windows.Forms.CheckBox AutoConnectCheckbox;
+        private System.Windows.Forms.CheckBox ConsoleCkeckbox;
     }
 }
 
