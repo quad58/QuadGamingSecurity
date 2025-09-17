@@ -23,14 +23,19 @@ namespace QuadGamingSecurity
 
         private RegistryKey RegistryKey;
 
+        private Size DefaultWindowSize = new Size(600, 600);
+        private int ConsoleHeight = 158;
+
         private bool ConsoleVisible
         {
             get => ConsoleTextBox.Visible;
             set
             {
-                ConsoleCkeckbox.Checked = value;
+                ConsoleCheckbox.CheckedChanged -= new EventHandler(ConsoleCheckbox_CheckedChanged);
+                ConsoleCheckbox.Checked = value;
+                ConsoleCheckbox.CheckedChanged += new EventHandler(ConsoleCheckbox_CheckedChanged);
                 ConsoleTextBox.Visible = value;
-                Size = value ? new Size(816, 600) : new Size(816, 442);
+                Size = new Size(Size.Width, DefaultWindowSize.Height - (!value ? ConsoleHeight : 0));
                 Settings.Default.ConsoleVisible = value;
                 Settings.Default.Save();
             }
@@ -77,6 +82,8 @@ namespace QuadGamingSecurity
 
             RefreshWindowsList();
             RefreshPortsList();
+
+            Size = DefaultWindowSize;
 
             RegistryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
             if (RegistryKey.GetValue("QuadGamingSecurity") != null)
@@ -342,9 +349,9 @@ namespace QuadGamingSecurity
             }
         }
 
-        private void ConsoleCkeckbox_CheckedChanged(object sender, EventArgs e)
+        private void ConsoleCheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            ConsoleVisible = ConsoleCkeckbox.Checked;
+            ConsoleVisible = ConsoleCheckbox.Checked;
         }
 
         private void AutoConnectCheckbox_CheckedChanged(object sender, EventArgs e)

@@ -39,11 +39,11 @@ namespace QuadGamingSecurity
             this.ForegroundSelectedProcessButton = new System.Windows.Forms.Button();
             this.ExitButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.ConsoleCheckbox = new System.Windows.Forms.CheckBox();
             this.AutostartCheckbox = new System.Windows.Forms.CheckBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.ConsoleTextBox = new System.Windows.Forms.TextBox();
             this.AutoConnectCheckbox = new System.Windows.Forms.CheckBox();
-            this.ConsoleCkeckbox = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
@@ -55,7 +55,7 @@ namespace QuadGamingSecurity
             this.PortsListBox.FormattingEnabled = true;
             this.PortsListBox.Location = new System.Drawing.Point(12, 12);
             this.PortsListBox.Name = "PortsListBox";
-            this.PortsListBox.Size = new System.Drawing.Size(776, 95);
+            this.PortsListBox.Size = new System.Drawing.Size(560, 95);
             this.PortsListBox.TabIndex = 0;
             this.PortsListBox.SelectedIndexChanged += new System.EventHandler(this.DevicesListBox_SelectedIndexChanged);
             // 
@@ -66,7 +66,7 @@ namespace QuadGamingSecurity
             this.WindowsListBox.FormattingEnabled = true;
             this.WindowsListBox.Location = new System.Drawing.Point(12, 143);
             this.WindowsListBox.Name = "WindowsListBox";
-            this.WindowsListBox.Size = new System.Drawing.Size(776, 186);
+            this.WindowsListBox.Size = new System.Drawing.Size(560, 186);
             this.WindowsListBox.TabIndex = 1;
             this.WindowsListBox.SelectedIndexChanged += new System.EventHandler(this.WindowsListBox_SelectedIndexChanged);
             // 
@@ -111,7 +111,7 @@ namespace QuadGamingSecurity
             // ExitButton
             // 
             this.ExitButton.Dock = System.Windows.Forms.DockStyle.Right;
-            this.ExitButton.Location = new System.Drawing.Point(701, 0);
+            this.ExitButton.Location = new System.Drawing.Point(485, 0);
             this.ExitButton.Name = "ExitButton";
             this.ExitButton.Size = new System.Drawing.Size(75, 23);
             this.ExitButton.TabIndex = 5;
@@ -123,13 +123,24 @@ namespace QuadGamingSecurity
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.Controls.Add(this.ConsoleCkeckbox);
+            this.panel1.Controls.Add(this.ConsoleCheckbox);
             this.panel1.Controls.Add(this.AutostartCheckbox);
             this.panel1.Controls.Add(this.ExitButton);
             this.panel1.Location = new System.Drawing.Point(12, 5);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(776, 23);
+            this.panel1.Size = new System.Drawing.Size(560, 23);
             this.panel1.TabIndex = 6;
+            // 
+            // ConsoleCheckbox
+            // 
+            this.ConsoleCheckbox.AutoSize = true;
+            this.ConsoleCheckbox.Location = new System.Drawing.Point(148, 4);
+            this.ConsoleCheckbox.Name = "ConsoleCheckbox";
+            this.ConsoleCheckbox.Size = new System.Drawing.Size(64, 17);
+            this.ConsoleCheckbox.TabIndex = 7;
+            this.ConsoleCheckbox.Text = "Console";
+            this.ConsoleCheckbox.UseVisualStyleBackColor = true;
+            this.ConsoleCheckbox.CheckedChanged += new System.EventHandler(this.ConsoleCheckbox_CheckedChanged);
             // 
             // AutostartCheckbox
             // 
@@ -148,7 +159,7 @@ namespace QuadGamingSecurity
             this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel2.Location = new System.Drawing.Point(0, 521);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(800, 40);
+            this.panel2.Size = new System.Drawing.Size(584, 40);
             this.panel2.TabIndex = 7;
             // 
             // ConsoleTextBox
@@ -160,7 +171,7 @@ namespace QuadGamingSecurity
             this.ConsoleTextBox.Multiline = true;
             this.ConsoleTextBox.Name = "ConsoleTextBox";
             this.ConsoleTextBox.ReadOnly = true;
-            this.ConsoleTextBox.Size = new System.Drawing.Size(775, 154);
+            this.ConsoleTextBox.Size = new System.Drawing.Size(559, 154);
             this.ConsoleTextBox.TabIndex = 8;
             // 
             // AutoConnectCheckbox
@@ -174,22 +185,11 @@ namespace QuadGamingSecurity
             this.AutoConnectCheckbox.UseVisualStyleBackColor = true;
             this.AutoConnectCheckbox.CheckedChanged += new System.EventHandler(this.AutoConnectCheckbox_CheckedChanged);
             // 
-            // ConsoleCkeckbox
-            // 
-            this.ConsoleCkeckbox.AutoSize = true;
-            this.ConsoleCkeckbox.Location = new System.Drawing.Point(148, 4);
-            this.ConsoleCkeckbox.Name = "ConsoleCkeckbox";
-            this.ConsoleCkeckbox.Size = new System.Drawing.Size(64, 17);
-            this.ConsoleCkeckbox.TabIndex = 7;
-            this.ConsoleCkeckbox.Text = "Console";
-            this.ConsoleCkeckbox.UseVisualStyleBackColor = true;
-            this.ConsoleCkeckbox.CheckedChanged += new System.EventHandler(this.ConsoleCkeckbox_CheckedChanged);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 561);
+            this.ClientSize = new System.Drawing.Size(584, 561);
             this.Controls.Add(this.AutoConnectCheckbox);
             this.Controls.Add(this.ConsoleTextBox);
             this.Controls.Add(this.panel2);
@@ -227,7 +227,7 @@ namespace QuadGamingSecurity
         private System.Windows.Forms.TextBox ConsoleTextBox;
         private System.Windows.Forms.CheckBox AutostartCheckbox;
         private System.Windows.Forms.CheckBox AutoConnectCheckbox;
-        private System.Windows.Forms.CheckBox ConsoleCkeckbox;
+        private System.Windows.Forms.CheckBox ConsoleCheckbox;
     }
 }
 
