@@ -46,16 +46,16 @@ namespace QuadGamingSecurity
         private static extern bool SetForegroundWindow(IntPtr hWnd);
 
         [DllImport("user32.dll")]
-        public static extern IntPtr GetForegroundWindow();
+        private static extern IntPtr GetForegroundWindow();
 
         [DllImport("kernel32.dll")]
-        public static extern uint GetCurrentThreadId();
+        private static extern uint GetCurrentThreadId();
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
         [DllImport("user32.dll")]
-        public static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
+        private static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
 
         private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 
@@ -112,13 +112,18 @@ namespace QuadGamingSecurity
 
         private void DevicesListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (PortsListBox.SelectedIndex != 0)
+            SelectPort(PortsListBox.SelectedIndex);
+        }
+
+        public void SelectPort(int index)
+        {
+            if (index != 0)
             {
-                if (PortsListBox.SelectedIndex != -1)
+                if (index != -1)
                 {
-                    Console.WriteLine("Port selected: " + PortsNames[PortsListBox.SelectedIndex - 1]);
+                    Console.WriteLine("Port selected: " + PortsNames[index - 1]);
                     ClosePort();
-                    OpenPort(PortsNames[PortsListBox.SelectedIndex - 1]);
+                    OpenPort(PortsNames[index - 1]);
                 }
             }
             else
@@ -128,7 +133,7 @@ namespace QuadGamingSecurity
             }
         }
 
-        private void RefreshPortsList()
+        public void RefreshPortsList()
         {
             Console.WriteLine("Refreshing ports list...");
 
@@ -144,7 +149,7 @@ namespace QuadGamingSecurity
             }
         }
 
-        private void OpenPort(string portName)
+        public void OpenPort(string portName)
         {
             Console.WriteLine("Opening " + portName);
             if (AutoConnectCheckbox.Checked)
@@ -187,7 +192,7 @@ namespace QuadGamingSecurity
             }
         }
 
-        private void ClosePort()
+        public void ClosePort()
         {
             if (ConnectedSerialPort != null)
             {
@@ -200,24 +205,7 @@ namespace QuadGamingSecurity
             }
         }
 
-        private void WindowsListBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (WindowsListBox.SelectedIndex != 0)
-            {
-                if (WindowsListBox.SelectedIndex != -1)
-                {
-                    Console.WriteLine("Window selected: " + WindowsListBox.SelectedItem);
-                    SelectedWindow = OpenedWindowsList[WindowsListBox.SelectedIndex - 1];
-                }
-            }
-            else
-            {
-                Console.WriteLine("Window deselected");
-                SelectedWindow = IntPtr.Zero;
-            }
-        }
-
-        private void RefreshWindowsList()
+        public void RefreshWindowsList()
         {
             Console.WriteLine("Refreshing windows list...");
 
@@ -245,6 +233,28 @@ namespace QuadGamingSecurity
             }, IntPtr.Zero);
         }
 
+        private void WindowsListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SelectWindow(WindowsListBox.SelectedIndex);
+        }
+
+        public void SelectWindow(int index)
+        {
+            if (index != 0)
+            {
+                if (index != -1)
+                {
+                    Console.WriteLine("Window selected: " + WindowsListBox.SelectedItem);
+                    SelectedWindow = OpenedWindowsList[WindowsListBox.SelectedIndex - 1];
+                }
+            }
+            else
+            {
+                Console.WriteLine("Window deselected");
+                SelectedWindow = IntPtr.Zero;
+            }
+        }
+
         private void Form1_Resize(object sender, EventArgs e)
         {
             if (WindowState == FormWindowState.Minimized)
@@ -253,16 +263,18 @@ namespace QuadGamingSecurity
             }
         }
 
-        private void HideToTray()
+        public void HideToTray()
         {
             Visible = false;
             ShowInTaskbar = false;
         }
 
-        private void ShowFromTray()
+        public void ShowFromTray()
         {
             Visible = true;
             ShowInTaskbar = true;
+            Show();
+            WindowState = FormWindowState.Normal;
             RefreshWindowsList();
             RefreshPortsList();
         }
@@ -281,7 +293,7 @@ namespace QuadGamingSecurity
             ForegroundSelectedWindow();
         }
 
-        private void ExitPropperly()
+        public void ExitPropperly()
         {
             PropperExiting = true;
             Application.Exit();
@@ -292,7 +304,7 @@ namespace QuadGamingSecurity
             ShowFromTray();
         }
 
-        private void ForegroundSelectedWindow()
+        public void ForegroundSelectedWindow()
         {
             if (SelectedWindow != IntPtr.Zero)
             {
@@ -302,7 +314,7 @@ namespace QuadGamingSecurity
             }
         }
 
-        private void ForegroundWindowBypassed(IntPtr hWnd)
+        public void ForegroundWindowBypassed(IntPtr hWnd)
         {
             IntPtr foregroundWindow = GetForegroundWindow();
             uint currentThreadId = GetCurrentThreadId();
@@ -332,16 +344,11 @@ namespace QuadGamingSecurity
             ExitPropperly();
         }
 
-        private void Form1_Shown(object sender, EventArgs e)
-        {
-            WindowState = FormWindowState.Minimized;
-        }
-
         private void AutostartCheckbox_CheckedChanged(object sender, EventArgs e)
         {
             if (AutostartCheckbox.Checked)
             {
-                RegistryKey.SetValue("QuadGamingSecurity", Application.ExecutablePath);
+                RegistryKey.SetValue("QuadGamingSecurity", Application.ExecutablePath + " /autostart");
             }
             else
             {
