@@ -334,7 +334,7 @@ namespace QuadGamingSecurity
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            //WindowState = FormWindowState.Minimized;
+            WindowState = FormWindowState.Minimized;
         }
 
         private void AutostartCheckbox_CheckedChanged(object sender, EventArgs e)
