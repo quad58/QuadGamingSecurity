@@ -6,3 +6,7 @@ Windows/.vs/QuadGamingSecurity/v17/DocumentLayout.json
 Windows/.vs/QuadGamingSecurity/v17/.suo
 /Windows/QuadGamingSecurity/bin
 /Windows/QuadGamingSecurity/obj
+/QuadGamingSecurity/obj
+/QuadGamingSecurity/bin
+/.vs
+/QuadGamingSecurity/.vs
